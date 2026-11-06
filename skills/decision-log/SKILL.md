@@ -51,7 +51,7 @@ Decisions are the user's. When work runs into one, stop and put the choice to th
 3. **Update the decision summary** (`## Decision summary` in `docs/architecture.md`): the area's current choice and the main alternative rejected, citing the decision number. Add a row for a new area.
 4. **Update the sections that describe the area**, so none of them still argues for the old choice. Search for the old choice's name across `docs/` and fix every place that now contradicts the decision, other records included.
 5. **Update `## Open questions`** in `docs/architecture.md`: tick a question the decision settles, with a pointer to where it is described, and correct any entry the decision changes.
-6. **Update AGENTS.md** if a rule, a command, the crate table or the current phase changed.
+6. **Update AGENTS.md** if a rule, a command, the crate table or the current phase changed, and `docs/crates.md` if a crate's role or state changed.
 7. **Update the project skills** that encode the old convention: they live in the agent kit, so the change there is a pull request to the kit, made once the main repository's change has landed.
 8. **Measurements go in this repository's docs**: a decision that follows from measurements gives the numbers that matter in its record, with their hardware, and the method and the rest of the numbers in the port spec or the doc that describes the area (`docs/engine.md`, `docs/gui.md`, `docs/ports/…`).
 

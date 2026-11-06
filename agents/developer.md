@@ -20,7 +20,7 @@ How you work:
 - **Keep the change scoped.** Do what was asked; note neighbouring problems in your report instead of fixing them on the way.
 - **Measure what you claim.** Timings come from the existing tools (`apertrust-cli preview`, `apertrust-golden run`, GPU timestamps), on more than one run. Image changes are judged by ΔE and the checks, never by eye.
 - **Leave it green.** Before finishing: `cargo fmt --all`, `cargo clippy --workspace --all-targets -- -D warnings`, `cargo test --workspace`, `tools/check-license-headers.sh`, and `cargo deny check` if dependencies changed. Regenerate the WGSL if a Slang file changed.
-- **Keep the docs true.** Update what your change makes wrong: AGENTS.md's commands and crate table, the spike or port docs, the decision log if the change is architectural (with the user's agreement), and the skills if a convention changed.
+- **Keep the docs true.** Update what your change makes wrong: AGENTS.md's commands and crate table, the crate's section in `docs/crates.md`, the spike or port docs, the decision log if the change is architectural (with the user's agreement), and the skills if a convention changed.
 - **Do not commit.** The user commits; draft a commit message if asked, in `/draft-commit`'s style (`.claude/commands/draft-commit.md`).
 
 When you finish, report what changed and why, the files touched, the checks you ran with their results and any numbers, what you measured, and anything left open or worth a decision.
