@@ -1,0 +1,12 @@
+{
+  "name": "apertrust",
+  "version": "0.1.0",
+  "description": "Skills, agents and commands for working on Apertrust, a free, non-destructive, cross-platform raw photo editor, with Claude Code.",
+  "author": {
+    "name": "Apertrust developers"
+  },
+  "homepage": "https://github.com/apertrust/agent-kit",
+  "repository": "https://github.com/apertrust/agent-kit",
+  "license": "GPL-3.0-or-later",
+  "keywords": ["apertrust", "raw-photo", "rust", "wgpu", "slang"]
+}
