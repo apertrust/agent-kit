@@ -1,0 +1,14 @@
+{
+  "name": "agent-kit",
+  "description": "The agent kit for working on Apertrust with AI coding agents.",
+  "owner": {
+    "name": "Apertrust developers"
+  },
+  "plugins": [
+    {
+      "name": "apertrust",
+      "source": "./",
+      "description": "Skills, agents and commands for working on Apertrust with Claude Code."
+    }
+  ]
+}
