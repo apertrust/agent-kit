@@ -13,6 +13,7 @@ The kit holds what an agent needs to work the way the project does. The skills e
 | `skills/` | Eight skills, each a folder with a `SKILL.md` and its references |
 | `agents/` | Seven agents, one Markdown file each |
 | `commands/` | Four commands, one Markdown file each |
+| `.mcp.json` | DeepWiki's public MCP server, for questions about the projects Apertrust builds on |
 
 The files are written for a checkout of the main repository. The paths in them (`docs/…`, `crates/…`, `tools/…`) are relative to it, so the kit is of little use on its own.
 
@@ -86,6 +87,23 @@ The script never touches a file it did not install. If a file with the same name
 ### By hand
 
 Copy `skills/<name>/` from the kit into `.claude/skills/` (Claude Code) or `.agents/skills/` (opencode and Copilot) in your checkout, and for Claude Code `agents/<name>.md` into `.claude/agents/` and `commands/<name>.md` into `.claude/commands/`. Delete them to remove them.
+
+### DeepWiki, for orientation
+
+The kit adds [DeepWiki](https://deepwiki.com)'s public MCP server, which answers questions about the projects Apertrust builds on: darktable, wgpu, Slang, egui and rawler. It indexes their current branches, so it is for orientation only: a port still reads darktable's source at the reference release's tag.
+
+- **The plugin** brings it with it (`.mcp.json`).
+- **A copy install** does not write it into your checkout, since Claude Code reads a project's servers from a file at the checkout's root. Add it to your own Claude Code configuration instead:
+
+  ```sh
+  claude mcp add --transport http deepwiki https://mcp.deepwiki.com/mcp
+  ```
+
+- **opencode:** add it to your own `opencode.json`:
+
+  ```json
+  { "mcp": { "deepwiki": { "type": "remote", "url": "https://mcp.deepwiki.com/mcp" } } }
+  ```
 
 ### Not yet
 
