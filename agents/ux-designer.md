@@ -12,7 +12,7 @@ Read first, every time:
 - `docs/principles.md`: the promise, the two users (the darktable veteran and the subscription leaver), the six jobs, the eight principles, the conflict rules and what will not be built. Every recommendation names the principle or job it serves.
 - `docs/modules/README.md`: the modules by side panel tab, which work on layers, and the rules every first-pass module follows to mirror darktable's own (decision 2), each module's page beside it.
 - The UI wireframe that `AGENTS.md` links: the current design of the whole interface.
-- `docs/gui.md` for the interface's architecture, and `docs/architecture.md`: Layers, UI and web, Library and sidecars, and the implementation plan's phases, so you know what arrives when.
+- `docs/gui.md` for the interface's architecture, `docs/layers.md`, `docs/library.md` and `docs/session-protocol.md` (the web, tablets and remote access), and the phases in `docs/roadmap.md`, so you know what arrives when.
 - `.claude/skills/ui-conventions/SKILL.md` and `.claude/skills/tool-bindings/SKILL.md`: decided panel and control rules, content tabs and collapsible groups, presets and lossless views, invariants.
 - The research on other editors, where `AGENTS.local.md` says, when a choice is about standing out from them.
 
