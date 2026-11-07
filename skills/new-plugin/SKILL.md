@@ -6,7 +6,7 @@ argument-hint: "[module]"
 
 # New plugin
 
-Every operation, built-in or third-party, is a native plugin behind one interface (`docs/architecture.md`, Plugin architecture; decisions 4 and 20). An operation is one engine algorithm: darktable's iop without its GUI. Modules, what the user sees, bind to operations' parameters (`tool-bindings`). darktable modules are never loaded; a darktable port is an operation whose maths comes from darktable's source (the `port-module` skill).
+Every operation, built-in or third-party, is a native plugin behind one interface (`docs/plugins.md`; decisions 4 and 20). An operation is one engine algorithm: darktable's iop without its GUI. Modules, what the user sees, bind to operations' parameters (`tool-bindings`). darktable modules are never loaded; a darktable port is an operation whose maths comes from darktable's source (the `port-module` skill).
 
 **Status:** the layout is decided (decision 20, below), and operation crates exist, each with its Slang source, generated WGSL, setup and `KERNEL`. Every one implements the `Operation` trait (`apertrust-plugin`) and is in `OPERATIONS`, in darktable's v5.0 order (decision 22). rawprepare, temperature, highlights, demosaic, colorin, exposure, channelmixerrgb (color calibration), AgX and colorout have `default_enabled` on, so the engine's pipeline runs them on every photo. toneequal, colorbalancergb, rgbcurve, rgblevels, bilat (local contrast), bloom, soften, colorequal, primaries, hazeremoval, grain, vignette, sigmoid and filmicrgb have it off, so the session plans them only while a module sets them, or, for a switched module, while it is on (decisions 28 and 32). Use `crates/op/agx/src/lib.rs` as the model: its manifest, its schema of darktable's field names with their ranges and defaults, `prepare` calling the setup, and the tests that tie the schema's defaults to darktable's.
 
@@ -16,7 +16,7 @@ Every operation, built-in or third-party, is a native plugin behind one interfac
 | --- | --- |
 | Manifest | ID, version, domain (scene or display), slot (a stage and an order number, darktable's where Apertrust keeps darktable's place; decision 22), layer support, differentiable flag, the neighbourhood radius at full resolution, a fixed reach and the default of `Operation::reach`: the border a tile needs on every side for its output to equal the untiled one bit for bit (decision 13), and `default_enabled`: whether an unedited photo runs it (decision 28) |
 | Parameter schema | Engine parameters with ranges, units and meaning; versioned, with migrations |
-| Kernels | Slang source, with one entry point per pass and, outside the raw stage, the derivative entry points (decision 21), and its generated WGSL (`slang-kernels`), plus an optional CPU reference for tests |
+| Kernels | Slang source, with one entry point per pass and, outside the raw stage and for an operation with a continuous parameter, the derivative entry points (decisions 11 and 21; none for `flip`, `colorin` or `colorout`), and its generated WGSL (`slang-kernels`), plus an optional CPU reference for tests |
 | Setup | `prepare`: from the parameters and the image's context to uniforms and tables, as darktable's `commit_params` does |
 | Tests | Golden cases and invariant tests (`golden-tests`) |
 | Provenance | The darktable module, its source files and the release commit it was ported from |

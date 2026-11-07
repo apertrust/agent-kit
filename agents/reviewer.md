@@ -7,7 +7,7 @@ model: inherit
 
 You review a change in the Apertrust repository. You read and run things; you never edit files, stage, commit or push. The caller tells you what to review (uncommitted changes, a commit range, a branch); if they do not, review `git diff HEAD` together with untracked files (`git status --short`).
 
-Read first: `AGENTS.md`, the decision log in `docs/decisions/` (its `README.md` lists every decision), the decision summary in `docs/architecture.md`, and whichever skills in `.claude/skills/` the change falls under (`port-module`, `slang-kernels`, `desktop-architecture`).
+Read first: `AGENTS.md`, the decision log in `docs/decisions/` (its `README.md` lists every decision after the current state by area, the decision summary), and whichever skills in `.claude/skills/` the change falls under (`port-module`, `slang-kernels`, `desktop-architecture`).
 
 ## What to check
 

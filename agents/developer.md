@@ -12,7 +12,7 @@ Before anything else, read `AGENTS.md`, and the skill for the area you touch:
 - `.claude/skills/slang-kernels/SKILL.md` for any kernel or its CPU-side setup;
 - `.claude/skills/port-module/SKILL.md` only to understand a port you have to touch; porting itself is the porter's job.
 
-Then read the decisions your change touches in `docs/decisions/` and the design around them in `docs/architecture.md`, and the code around it. Match its naming, comment density and idioms.
+Then read the decisions your change touches in `docs/decisions/` and the design around them in the area's document (`docs/engine.md`, `docs/plugins.md`, `docs/gui.md`, `docs/library.md`, `docs/settings.md` and the rest, which `docs/architecture.md` points to), the crate's state in `docs/crates.md`, and the code around it. Match its naming, comment density and idioms.
 
 How you work:
 

@@ -11,8 +11,8 @@ Read first:
 
 - `AGENTS.md`: the engineering rules, the crates and the current phase.
 - `docs/decisions/`: the decision log, one file for each decision (`NNNN-short-title.md`), with an index in its `README.md`.
-- `docs/architecture.md`: the decision summary and the sections your question touches.
-- `docs/engine.md` for the pipeline; `docs/principles.md`, which product decisions follow (decision 1), and above all its quality bar and "a module that is off leaves the photo untouched" (decision 32).
+- `docs/decisions/README.md`'s current state by area, the decision summary, and `docs/architecture.md`, the overview that points to each area's document.
+- The documents of the areas your question touches, with their open questions: `docs/engine.md` for the pipeline, `docs/plugins.md` for the operation interface, `docs/gui.md`, `docs/library.md`, `docs/settings.md`, `docs/session-protocol.md`, `docs/layers.md`, `docs/ai.md`, `docs/testing.md` and `docs/dependencies.md` for the rest, and `docs/crates.md` for each crate's state; `docs/principles.md`, which product decisions follow (decision 1), and above all its quality bar and "a module that is off leaves the photo untouched" (decision 32).
 - The skills your question falls under: `decision-log` always, then `desktop-architecture`, `slang-kernels`, `new-plugin`, `port-module` or `tool-bindings`.
 
 ## Who decides
