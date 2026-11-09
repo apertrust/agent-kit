@@ -34,7 +34,7 @@ When a new kind of file joins the kit, add it to the script and to the README's 
 ## Formats
 
 - **Skills:** `SKILL.md` starts with YAML front matter holding `name` (the folder's name) and `description` (what the skill does and when to use it). Opencode and Copilot read the same folder format from `.agents/skills/`.
-- **Agents and commands:** Markdown with front matter, in Claude Code's format. Kimi Code reads the same agent files from `.kimi-code/agents/`, the script renaming `WebFetch` to `FetchURL` in their `tools`, and each command as a flat skill, `.kimi-code/skills/<name>.md`, named after its file; keep a command's name apart from every skill's. Opencode and Copilot get the skills only.
+- **Agents and commands:** Markdown with front matter, in Claude Code's format. Kimi Code reads the agent files from `.kimi-code/agents/`, the script renaming `WebFetch` to `FetchURL`, pointing `.claude/` paths at `.kimi-code/`, adapting `/port`'s worktree and resume steps to Kimi's Agent tool, and giving the product manager a `subagents` list for the other kit agents. Each command is installed as a flat skill, `.kimi-code/skills/<name>.md`, named after its file; keep a command's name apart from every skill's. Opencode and Copilot get the skills only.
 - **Plugin:** `.claude-plugin/plugin.json` needs `name`; the marketplace entry's `name` must equal it, and its `source` is `./`. Run `claude plugin validate .` after editing either file. Keep `version` in step with the changes you ship.
 
 ## Rules

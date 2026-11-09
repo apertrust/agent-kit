@@ -24,8 +24,7 @@
 # copilot   the same folder as opencode (agents and commands: not yet)
 # kimi      everything into CHECKOUT/.kimi-code/, for Kimi Code: skills into
 #           skills/, each command as a flat skill, skills/<name>.md, and the
-#           agents into agents/, their WebFetch tool named FetchURL, as Kimi
-#           Code names it
+#           agents into agents/, with Kimi's tool, path and delegation names
 #
 # Copies are made, never links. Each folder the script installs into gets a
 # manifest, .agent-kit-installed, listing the files it installed (one path per
@@ -196,13 +195,22 @@ sync() {
             install_files skills "$root/skills" '*'
             ;;
         .kimi-code)
-            # Kimi Code reads Claude Code's agent files, the same tool names but
-            # WebFetch's, which it calls FetchURL; it has no commands folder, and a
-            # flat <name>.md in a skills folder is a skill named after its file.
+            # Kimi Code reads Claude Code's agent files, with its own tool, folder
+            # and delegation names. Commands become flat skills; port's worktree
+            # and resume instructions use Kimi's tools instead.
             install_files skills "$root/skills" '*'
-            install_files commands "$root/skills" '*.md'
+            install_files commands "$root/skills" '*.md' 's#\.claude/#.kimi-code/#g
+s/with `isolation: "worktree"`/in a worktree created first with `git worktree add`; pass its absolute path and require every file path and command to stay inside it/
+s/(SendMessage)/(using the Agent tool `resume` argument)/'
             install_files agents "$root/agents" '*.md' '/^tools:/s/ WebFetch,/ FetchURL,/
-/^tools:/s/ WebFetch$/ FetchURL/'
+/^tools:/s/ WebFetch$/ FetchURL/
+s#\.claude/commands/#.kimi-code/skills/#g
+s#\.claude/#.kimi-code/#g
+s/Run it as the main session, `claude --agent product-manager`, since an agent started by another cannot start agents of its own; as a subagent it can only plan and research\./Run it as the main session, `kimi --agent product-manager`./
+/^name: product-manager$/,/^---$/ {
+    /^model: inherit$/a\
+subagents: architect, developer, porter, reviewer, tester, ux-designer
+}'
             ;;
         esac
     fi

@@ -28,7 +28,7 @@ The files are written for a checkout of the main repository. The paths in them (
 
 opencode and Copilot both read skills from `.agents/skills/`. Their agents and commands use other formats, and the kit does not convert them yet.
 
-Kimi Code reads the skills and Claude Code's agent files from `.kimi-code/`. It has no commands folder, so each command is installed as a flat skill, `.kimi-code/skills/<name>.md`, run as `/draft-commit` or `/skill:draft-commit`. The agents' `WebFetch` tool is renamed `FetchURL`, Kimi Code's name for it; their `model` is ignored. Run an agent as the main one with `kimi --agent reviewer`. Kimi Code's main agent starts only the subagents its `subagents` list names, by default its own `coder`, `explore` and `plan`, so the product manager cannot hand work to the kit's other agents there.
+Kimi Code reads the skills and Claude Code's agent files from `.kimi-code/`. It has no commands folder, so each command is installed as a flat skill, `.kimi-code/skills/<name>.md`, run as `/draft-commit` or `/skill:draft-commit`. The installer renames the agents' `WebFetch` tool to `FetchURL`, points their `.claude/` paths at `.kimi-code/`, adapts `/port`'s worktree and resume steps to Kimi's Agent tool, and gives the product manager a `subagents` list for the other kit agents; their `model` is ignored. Run an agent as the main one with `kimi --agent reviewer`.
 
 ## Install
 
@@ -90,7 +90,7 @@ The script never touches a file it did not install. If a file with the same name
 
 ### By hand
 
-Copy `skills/<name>/` from the kit into `.claude/skills/` (Claude Code), `.kimi-code/skills/` (Kimi Code) or `.agents/skills/` (opencode and Copilot) in your checkout. For Claude Code, copy `agents/<name>.md` into `.claude/agents/` and `commands/<name>.md` into `.claude/commands/`; for Kimi Code, `agents/<name>.md` into `.kimi-code/agents/`, with `WebFetch` changed to `FetchURL` in its `tools`, and `commands/<name>.md` into `.kimi-code/skills/`. Delete them to remove them.
+Copy `skills/<name>/` from the kit into `.claude/skills/` (Claude Code), `.kimi-code/skills/` (Kimi Code) or `.agents/skills/` (opencode and Copilot) in your checkout. For Claude Code, copy `agents/<name>.md` into `.claude/agents/` and `commands/<name>.md` into `.claude/commands/`. For Kimi Code, copy the agents into `.kimi-code/agents/` and the commands into `.kimi-code/skills/`, then apply the tool, path, worktree, resume and delegation adaptations described above. Delete the copies to remove them.
 
 ### DeepWiki, for orientation
 
