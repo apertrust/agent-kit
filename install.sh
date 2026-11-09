@@ -17,11 +17,14 @@
 
 # Copies the kit's skills, agents and commands into a checkout of Apertrust.
 #
-#   install.sh CHECKOUT [--harness claude|opencode|copilot|all] [--uninstall]
+#   install.sh CHECKOUT [--harness claude|opencode|copilot|kimi|all] [--uninstall]
 #
 # claude    skills, agents and commands into CHECKOUT/.claude/
 # opencode  skills into CHECKOUT/.agents/skills/ (agents and commands: not yet)
 # copilot   the same folder as opencode (agents and commands: not yet)
+# kimi      everything into CHECKOUT/.kimi-code/, for Kimi Code: skills into
+#           skills/, each command as a flat skill, skills/<name>.md, and the
+#           agents into agents/, with Kimi's tool, path and delegation names
 #
 # Copies are made, never links. Each folder the script installs into gets a
 # manifest, .agent-kit-installed, listing the files it installed (one path per
@@ -33,7 +36,7 @@
 set -eu
 
 usage() {
-    echo "usage: $0 CHECKOUT [--harness claude|opencode|copilot|all] [--uninstall]" >&2
+    echo "usage: $0 CHECKOUT [--harness claude|opencode|copilot|kimi|all] [--uninstall]" >&2
     exit 2
 }
 
@@ -81,12 +84,15 @@ checkout=$(cd "$checkout" && pwd -P)
 
 claude=0
 agents_folder=0
+kimi=0
 case $harness in
 claude) claude=1 ;;
 opencode | copilot) agents_folder=1 ;;
+kimi) kimi=1 ;;
 all)
     claude=1
     agents_folder=1
+    kimi=1
     ;;
 *)
     echo "unknown harness: $harness" >&2
@@ -129,8 +135,10 @@ prune() {
     done
 }
 
-# install_files KIT_FOLDER DEST_FOLDER PATTERN: copy the files of one kit folder
-# that match PATTERN into CHECKOUT/DEST_FOLDER, a path relative to CHECKOUT.
+# install_files KIT_FOLDER DEST_FOLDER PATTERN [FILTER]: copy the files of one kit
+# folder that match PATTERN into CHECKOUT/DEST_FOLDER, a path relative to CHECKOUT.
+# FILTER, a sed script, is applied to each file on the way: the copy is what it
+# writes, and that is what is compared with the file installed before.
 install_files() {
     from=$kit/$1
     [ -d "$from" ] || return 0
@@ -138,6 +146,10 @@ install_files() {
     while IFS= read -r src; do
         rel=$2/${src#"$from"/}
         dest=$checkout/$rel
+        if [ -n "${4:-}" ]; then
+            sed -e "$4" "$src" >"$tmp/filtered"
+            src=$tmp/filtered
+        fi
         if [ -f "$dest" ] && [ ! -L "$dest" ] && listed "$old" "$rel"; then
             if cmp -s "$src" "$dest"; then
                 echo "present  $rel"
@@ -158,7 +170,7 @@ install_files() {
 }
 
 # sync ROOT: bring CHECKOUT/ROOT in line with the kit, or empty it of the kit's
-# files with --uninstall; ROOT is .claude or .agents. The rest of the script
+# files with --uninstall; ROOT is .claude, .agents or .kimi-code. The rest of the script
 # fills in what each root receives before it calls this.
 sync() {
     root=$1
@@ -181,6 +193,24 @@ sync() {
             ;;
         .agents)
             install_files skills "$root/skills" '*'
+            ;;
+        .kimi-code)
+            # Kimi Code reads Claude Code's agent files, with its own tool, folder
+            # and delegation names. Commands become flat skills; port's worktree
+            # and resume instructions use Kimi's tools instead.
+            install_files skills "$root/skills" '*'
+            install_files commands "$root/skills" '*.md' 's#\.claude/#.kimi-code/#g
+s/with `isolation: "worktree"`/in a worktree created first with `git worktree add`; pass its absolute path and require every file path and command to stay inside it/
+s/(SendMessage)/(using the Agent tool `resume` argument)/'
+            install_files agents "$root/agents" '*.md' '/^tools:/s/ WebFetch,/ FetchURL,/
+/^tools:/s/ WebFetch$/ FetchURL/
+s#\.claude/commands/#.kimi-code/skills/#g
+s#\.claude/#.kimi-code/#g
+s/Run it as the main session, `claude --agent product-manager`, since an agent started by another cannot start agents of its own; as a subagent it can only plan and research\./Run it as the main session, `kimi --agent product-manager`./
+/^name: product-manager$/,/^---$/ {
+    /^model: inherit$/a\
+subagents: architect, developer, porter, reviewer, tester, ux-designer
+}'
             ;;
         esac
     fi
@@ -224,4 +254,7 @@ if [ "$agents_folder" -eq 1 ]; then
     sync .agents
     [ "$uninstall" -eq 1 ] ||
         echo "note: agents and commands for opencode and Copilot are not supported yet"
+fi
+if [ "$kimi" -eq 1 ]; then
+    sync .kimi-code
 fi
