@@ -25,16 +25,16 @@ It lists the paths the kit names that the checkout lacks. It skips darktable's `
 
 ## Installing
 
-The kit is opt-in: nothing in the main repository turns it on, and a contributor chooses whether to install it. It reaches a checkout in two ways, the Claude Code plugin or `install.sh`, which installs copies, never symbolic links. The main repository's `.gitignore` covers the folders it writes (`.claude/skills/`, `.claude/agents/`, `.claude/commands/`, `.agents/`), so keep to them, and tell the main repository if the script writes anywhere else.
+The kit is opt-in: nothing in the main repository turns it on, and a contributor chooses whether to install it. It reaches a checkout in two ways, the Claude Code plugin or `install.sh`, which installs copies, never symbolic links. The main repository's `.gitignore` covers the folders it writes (`.claude/skills/`, `.claude/agents/`, `.claude/commands/`, `.agents/`, `.kimi-code/`), so keep to them, and tell the main repository if the script writes anywhere else.
 
-`install.sh CHECKOUT [--harness claude|opencode|copilot|all] [--uninstall]` records the files it installs in a manifest per target folder, `.claude/.agent-kit-installed` and `.agents/.agent-kit-installed`: two comment lines (the kit's version from `.claude-plugin/plugin.json`, and its commit), then one path per line, relative to the checkout. A second run updates, adds and removes exactly the listed files, `--uninstall` removes exactly them and the manifest, and a file the script did not install is skipped, never replaced or removed. When you change the script, test on a scratch checkout: install, run again after changing and after removing a kit file, a foreign file of the same name, and uninstall leaving foreign files. Keep it POSIX (`cp -R`, `mkdir -p`, no `ln`, no GNU-only flags) so that it runs in Git Bash on Windows.
+`install.sh CHECKOUT [--harness claude|opencode|copilot|kimi|all] [--uninstall]` records the files it installs in a manifest per target folder, `.claude/.agent-kit-installed`, `.agents/.agent-kit-installed` and `.kimi-code/.agent-kit-installed`: two comment lines (the kit's version from `.claude-plugin/plugin.json`, and its commit), then one path per line, relative to the checkout. A second run updates, adds and removes exactly the listed files, `--uninstall` removes exactly them and the manifest, and a file the script did not install is skipped, never replaced or removed. When you change the script, test on a scratch checkout: install, run again after changing and after removing a kit file, a foreign file of the same name, and uninstall leaving foreign files. Keep it POSIX (`cp -R`, `mkdir -p`, no `ln`, no GNU-only flags) so that it runs in Git Bash on Windows.
 
 When a new kind of file joins the kit, add it to the script and to the README's table of what each harness reads.
 
 ## Formats
 
 - **Skills:** `SKILL.md` starts with YAML front matter holding `name` (the folder's name) and `description` (what the skill does and when to use it). Opencode and Copilot read the same folder format from `.agents/skills/`.
-- **Agents and commands:** Markdown with front matter, in Claude Code's format. Other harnesses are not supported yet.
+- **Agents and commands:** Markdown with front matter, in Claude Code's format. Kimi Code reads the same agent files from `.kimi-code/agents/`, the script renaming `WebFetch` to `FetchURL` in their `tools`, and each command as a flat skill, `.kimi-code/skills/<name>.md`, named after its file; keep a command's name apart from every skill's. Opencode and Copilot get the skills only.
 - **Plugin:** `.claude-plugin/plugin.json` needs `name`; the marketplace entry's `name` must equal it, and its `source` is `./`. Run `claude plugin validate .` after editing either file. Keep `version` in step with the changes you ship.
 
 ## Rules

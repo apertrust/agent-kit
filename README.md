@@ -22,10 +22,13 @@ The files are written for a checkout of the main repository. The paths in them (
 | Harness | Skills | Agents | Commands |
 | --- | --- | --- | --- |
 | Claude Code | yes | yes | yes |
+| Kimi Code | yes | yes | as skills |
 | opencode | yes | not yet | not yet |
 | GitHub Copilot | yes | not yet | not yet |
 
 opencode and Copilot both read skills from `.agents/skills/`. Their agents and commands use other formats, and the kit does not convert them yet.
+
+Kimi Code reads the skills and Claude Code's agent files from `.kimi-code/`. It has no commands folder, so each command is installed as a flat skill, `.kimi-code/skills/<name>.md`, run as `/draft-commit` or `/skill:draft-commit`. The agents' `WebFetch` tool is renamed `FetchURL`, Kimi Code's name for it; their `model` is ignored. Run an agent as the main one with `kimi --agent reviewer`. Kimi Code's main agent starts only the subagents its `subagents` list names, by default its own `coder`, `explore` and `plan`, so the product manager cannot hand work to the kit's other agents there.
 
 ## Install
 
@@ -63,7 +66,7 @@ Clone the kit beside your checkout of Apertrust, then run its script on the chec
 ```sh
 git clone https://github.com/apertrust/agent-kit.git
 cd agent-kit
-./install.sh ../apertrust --harness claude    # or opencode, or copilot, or all
+./install.sh ../apertrust --harness claude    # or kimi, opencode, copilot, or all
 ```
 
 The script copies files; it works in a POSIX shell, Git Bash on Windows included. What each harness reads:
@@ -72,11 +75,12 @@ The script copies files; it works in a POSIX shell, Git Bash on Windows included
 | --- | --- | --- |
 | `claude` | skills, agents, commands | `.claude/skills/`, `.claude/agents/`, `.claude/commands/` |
 | `opencode` or `copilot` | skills | `.agents/skills/` (both read it) |
-| `all` (the default) | both of the above | |
+| `kimi` | skills, agents, commands as skills | `.kimi-code/skills/`, `.kimi-code/agents/` |
+| `all` (the default) | all of the above | |
 
 The main repository's `.gitignore` ignores these folders, so the copies never show in `git status` and are never committed.
 
-Each folder gets a manifest, `.claude/.agent-kit-installed` and `.agents/.agent-kit-installed`, listing the files the script installed, one path per line, after two comment lines with the kit's version and commit. After a `git pull` in the kit, run the same command again: it replaces the files that changed, adds new ones and removes those the kit no longer has, by the manifest. Do not edit the copies; the next run overwrites them. Add your own skills or agents under other names.
+Each folder gets a manifest, `.claude/.agent-kit-installed`, `.agents/.agent-kit-installed` and `.kimi-code/.agent-kit-installed`, listing the files the script installed, one path per line, after two comment lines with the kit's version and commit. After a `git pull` in the kit, run the same command again: it replaces the files that changed, adds new ones and removes those the kit no longer has, by the manifest. Do not edit the copies; the next run overwrites them. Add your own skills or agents under other names.
 
 The script never touches a file it did not install. If a file with the same name is already there, it skips it and says so. To remove everything it installed, and nothing else:
 
@@ -86,7 +90,7 @@ The script never touches a file it did not install. If a file with the same name
 
 ### By hand
 
-Copy `skills/<name>/` from the kit into `.claude/skills/` (Claude Code) or `.agents/skills/` (opencode and Copilot) in your checkout, and for Claude Code `agents/<name>.md` into `.claude/agents/` and `commands/<name>.md` into `.claude/commands/`. Delete them to remove them.
+Copy `skills/<name>/` from the kit into `.claude/skills/` (Claude Code), `.kimi-code/skills/` (Kimi Code) or `.agents/skills/` (opencode and Copilot) in your checkout. For Claude Code, copy `agents/<name>.md` into `.claude/agents/` and `commands/<name>.md` into `.claude/commands/`; for Kimi Code, `agents/<name>.md` into `.kimi-code/agents/`, with `WebFetch` changed to `FetchURL` in its `tools`, and `commands/<name>.md` into `.kimi-code/skills/`. Delete them to remove them.
 
 ### DeepWiki, for orientation
 
@@ -97,6 +101,12 @@ The kit adds [DeepWiki](https://deepwiki.com)'s public MCP server, which answers
 
   ```sh
   claude mcp add --transport http deepwiki https://mcp.deepwiki.com/mcp
+  ```
+
+- **Kimi Code:** add it to your own `~/.kimi-code/mcp.json`:
+
+  ```json
+  { "mcpServers": { "deepwiki": { "url": "https://mcp.deepwiki.com/mcp" } } }
   ```
 
 - **opencode:** add it to your own `opencode.json`:
