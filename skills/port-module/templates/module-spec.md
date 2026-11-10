@@ -13,7 +13,7 @@ One paragraph: what the module does for the photographer, in editing terms, and 
 ## Pipeline
 
 - **darktable position:** <iop order neighbours>
-- **Apertrust slot:** <stage and number, as `docs/engine.md`'s Order table gives it (decision 22); where it is not darktable's place, why>
+- **Apertrust slot:** <stage and number, as `crates/operations/order.md`'s table gives it (decision 22); where it is not darktable's place, why>
 - **Domain:** scene-referred or display-referred, as the slot's side of the tone mapper says (`docs/layers.md`, Scene and display domains)
 - **Input and output:** raw mosaic, camera RGB or working RGB; colour space in and out
 - **Assumes earlier modules:** <e.g. white balance applied, demosaic done>

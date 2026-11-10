@@ -47,7 +47,7 @@ When a module calls a shared helper, port the helper as a Slang module of its ow
 - **`imageop.c` / `imageop.h`:** the module interface.
 - **`pixelpipe_hb.c`:** how modules are chained, including preview and full pipes.
 - **`blend.c`:** blending and masks. Apertrust handles these in its layer system, so read only to understand how a module's output gets blended.
-- **`src/common/iop_order.c`** (not under `src/develop/` in the reference release): the default module order (`v50_order`), the basis for each operation's slot: its stage and order number (decision 21). Its list order, not the numbers, is darktable's real order: lut3d, numbered 36, is listed after filmic rgb (46). In the first pass every operation keeps darktable's place, as `docs/engine.md`'s Order table lists them (decision 22).
+- **`src/common/iop_order.c`** (not under `src/develop/` in the reference release): the default module order (`v50_order`), the basis for each operation's slot: its stage and order number (decision 21). Its list order, not the numbers, is darktable's real order: lut3d, numbered 36, is listed after filmic rgb (46). In the first pass every operation keeps darktable's place, as `crates/operations/order.md`'s table lists them (decision 22).
 
 ## Finding where a parameter is used
 
