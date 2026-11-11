@@ -19,6 +19,9 @@ The files are written for a checkout of the main repository. The paths in them (
 
 ## Harnesses
 
+The support map and checklist for extending an integration are in
+[`docs/harnesses.md`](docs/harnesses.md).
+
 | Harness | Skills | Agents | Commands |
 | --- | --- | --- | --- |
 | Claude Code | yes | yes | yes |
@@ -31,7 +34,7 @@ opencode and Copilot both read skills from `.agents/skills/`. Their agents and c
 
 Codex reads the skills from `.agents/skills/`, and its custom agents from `.codex/agents/` as TOML files. The installer converts each command into an invokable skill folder (`$draft-commit`, `$draft-pr`, `$golden`, `$port`) and converts the Markdown agent definitions into Codex custom agents. Run one as the main agent with `codex --agent reviewer`. The generated agents inherit the active session's tools and permissions.
 
-Kimi Code reads the skills and Claude Code's agent files from `.kimi-code/`. It has no commands folder, so each command is installed as a flat skill, `.kimi-code/skills/<name>.md`, run as `/draft-commit` or `/skill:draft-commit`. The installer renames the agents' `WebFetch` tool to `FetchURL`, points their `.claude/` paths at `.kimi-code/`, adapts `/port`'s worktree and resume steps to Kimi's Agent tool, and gives the product manager a `subagents` list for the other kit agents; their `model` is ignored. Run an agent as the main one with `kimi --agent reviewer`.
+Kimi Code reads the shared skills and adapted Markdown agents from `.kimi-code/`. It has no commands folder, so each command is installed as a flat skill, `.kimi-code/skills/<name>.md`, run as `/draft-commit` or `/skill:draft-commit`. The installer maps Claude's built-in tool names to Kimi's (`ReadFile`, `Shell`, `WriteFile`, `StrReplaceFile`, `SearchWeb`, `FetchURL`), points `.claude/` paths at `.kimi-code/`, and gives the product manager a `subagents` list for the other kit agents; its model field is ignored. The `/port` workflow uses Kimi's Agent tool when available and keeps the same isolated-worktree handoff. Run an agent as the main one with `kimi --agent reviewer`.
 
 ## Install
 
@@ -129,6 +132,8 @@ The kit adds [DeepWiki](https://deepwiki.com)'s public MCP server, which answers
 ### Not yet
 
 The agents and commands for opencode and Copilot are not there yet: those harnesses get the skills only.
+
+Claude-specific hooks in the Apertrust checkout are not installed for Codex or Kimi. The skills name the same manual checks so the work can follow the same quality gates when those hooks are unavailable.
 
 ## Checking the kit against the repository
 

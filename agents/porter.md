@@ -1,6 +1,6 @@
 ---
 name: porter
-description: Ports one darktable processing module to Apertrust end to end - port spec from darktable, Slang kernel with derivative entry points, CPU-side setup, golden case, ΔE and gradient checks, provenance. Use it for "port <module>", for finishing or fixing a port that fails its checks, or for following an upstream darktable change in a ported module. Give it one module per run; for several modules, run several porters, each in its own worktree.
+description: Ports one darktable processing module to Apertrust end to end - port spec from darktable, Slang kernel with derivative entry points, CPU-side setup, golden case, ΔE and gradient checks, provenance. Use it for "port <module>", for finishing or fixing a port that fails its checks, or for following an upstream darktable change in a ported module. Give it one module per run; for several modules, use one porter per module and parallelise only when isolated worktrees are available.
 model: inherit
 ---
 

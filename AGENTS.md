@@ -6,6 +6,8 @@ The skills, agents and commands for working on [Apertrust](https://github.com/ap
 
 - `skills/<name>/SKILL.md`, with its `references/` and `templates/`.
 - `agents/<name>.md` and `commands/<name>.md`, one file each.
+- `docs/harnesses.md`: the source-to-harness support map and the checklist for
+  extending an integration.
 - `.claude-plugin/plugin.json` and `marketplace.json`: the Claude Code plugin (name `apertrust`) and its marketplace (name `agent-kit`).
 - `install.sh`: copies the kit into a checkout. `tools/check-paths.sh`: checks the kit's paths against a checkout.
 
@@ -30,6 +32,11 @@ The kit is opt-in: nothing in the main repository turns it on, and a contributor
 `install.sh CHECKOUT [--harness claude|codex|opencode|copilot|kimi|all] [--uninstall]` records the files it installs in a manifest per target folder: `.claude/.agent-kit-installed`, `.agents/.agent-kit-installed`, `.kimi-code/.agent-kit-installed` and `.codex/.agent-kit-installed`. Each manifest has two comment lines (the kit's version from `.claude-plugin/plugin.json`, and its commit), then one path per line, relative to the checkout. A second run updates, adds and removes exactly the listed files, `--uninstall` removes exactly them and the manifest, and a file the script did not install is skipped, never replaced or removed. When you change the script, test on a scratch checkout: install, run again after changing and after removing a kit file, a foreign file of the same name, and uninstall leaving foreign files. Keep it POSIX (`cp -R`, `mkdir -p`, no `ln`, no GNU-only flags) so that it runs in Git Bash on Windows.
 
 When a new kind of file joins the kit, add it to the script and to the README's table of what each harness reads.
+
+Keep canonical project guidance in `skills/`, `agents/` and `commands/`.
+Harness-specific output formats and capability adaptations belong at the
+integration boundary. Update `docs/harnesses.md` and the README support table
+when adding or changing an integration.
 
 ## Formats
 

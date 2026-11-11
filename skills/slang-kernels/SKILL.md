@@ -130,7 +130,7 @@ tools/build-kernels.sh --check   # lists stale or orphaned generated files; chan
 cargo test -p apertrust-operations -p apertrust-engine --test naga  # naga validates every kernel: main always, _backward and _forward_diff when the kernel declares derivatives; no write at a run-time index
 ```
 
-In Claude Code, a project hook runs the build and the naga test after every `.slang` edit and sends failures back (AGENTS.md, Project skills).
+Claude Code's project hook runs the build and naga test after every `.slang` edit and sends failures back (AGENTS.md, Project skills). The hook is Claude-specific. When it is not running, do the same check yourself after editing a `.slang` file: run `tools/build-kernels.sh`, then the naga test above; fix failures before continuing.
 
 Add a new operation's `KERNEL` to `KERNELS` in `apertrust-operations`, or an engine kernel to the engine's list, before testing, or naga never sees it. Commit the generated WGSL with its source: its diff is the review of what changed on the GPU.
 

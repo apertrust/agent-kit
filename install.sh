@@ -199,9 +199,7 @@ install_codex_commands() {
                     -e 's#`/draft-commit`#`$draft-commit`#g' \
                     -e 's#`/draft-pr`#`$draft-pr`#g' \
                     -e 's#`/golden`#`$golden`#g' \
-                    -e 's#`/port`#`$port`#g' \
-                    -e 's/with `isolation: "worktree"`/in a separate worktree created with `git worktree add`; pass its absolute path in the brief. If Codex cannot run the subagent there, stop before it edits and ask the user to start `codex --cd PATH --agent porter`/' \
-                    -e 's/Resume the porter with their answers (SendMessage)/Resume the porter subagent with the user answers/'
+                    -e 's#`/port`#`$port`#g'
         } >"$tmp/filtered"
         if [ -f "$dest" ] && [ ! -L "$dest" ] && listed "$old" "$rel"; then
             if cmp -s "$tmp/filtered" "$dest"; then
@@ -231,7 +229,6 @@ install_codex_agents() {
         rel=.codex/agents/$name.toml
         dest=$checkout/$rel
         description=$(sed -n '2,/^---$/ { /^description:/s/^description: //p; }' "$src")
-        description=$(printf '%s\n' "$description" | sed -e 's/claude --agent/codex --agent/g' -e 's/; as a subagent it can only plan and research//')
         {
             echo "name = '$name'"
             echo "description = '''$description'''"
@@ -247,8 +244,7 @@ install_codex_agents() {
                     -e 's#`/draft-commit`#`$draft-commit`#g' \
                     -e 's#`/draft-pr`#`$draft-pr`#g' \
                     -e 's#`/golden`#`$golden`#g' \
-                    -e 's#`/port`#`$port`#g' \
-                    -e 's/Run it as the main session, `codex --agent product-manager`, since an agent started by another cannot start agents of its own; as a subagent it can only plan and research\./Run it as the main session, `codex --agent product-manager`, so it can orchestrate the other project agents./'
+                    -e 's#`/port`#`$port`#g'
             echo "'''"
         } >"$tmp/filtered"
         if [ -f "$dest" ] && [ ! -L "$dest" ] && listed "$old" "$rel"; then
@@ -300,17 +296,22 @@ sync() {
             ;;
         .kimi-code)
             # Kimi Code reads Claude Code's agent files, with its own tool, folder
-            # and delegation names. Commands become flat skills; port's worktree
-            # and resume instructions use Kimi's tools instead.
+            # and delegation names. Commands become flat skills.
             install_files skills "$root/skills" '*'
-            install_files commands "$root/skills" '*.md' 's#\.claude/#.kimi-code/#g
-s/with `isolation: "worktree"`/in a worktree created first with `git worktree add`; pass its absolute path and require every file path and command to stay inside it/
-s/(SendMessage)/(using the Agent tool `resume` argument)/'
-            install_files agents "$root/agents" '*.md' '/^tools:/s/ WebFetch,/ FetchURL,/
-/^tools:/s/ WebFetch$/ FetchURL/
+            install_files commands "$root/skills" '*.md' 's#\.claude/#.kimi-code/#g'
+            install_files agents "$root/agents" '*.md' '/^tools:/s/^tools: Read,/tools: ReadFile,/
+/^tools:/s/, Read,/, ReadFile,/g
+/^tools:/s/, Bash,/, Shell,/g
+/^tools:/s/, Bash$/, Shell/
+/^tools:/s/, Write,/, WriteFile,/g
+/^tools:/s/, Write$/, WriteFile/
+/^tools:/s/, Edit,/, StrReplaceFile,/g
+/^tools:/s/, Edit$/, StrReplaceFile/
+/^tools:/s/, WebSearch,/, SearchWeb,/g
+/^tools:/s/, WebFetch,/, FetchURL,/g
+/^tools:/s/, WebFetch$/, FetchURL/
 s#\.claude/commands/#.kimi-code/skills/#g
 s#\.claude/#.kimi-code/#g
-s/Run it as the main session, `claude --agent product-manager`, since an agent started by another cannot start agents of its own; as a subagent it can only plan and research\./Run it as the main session, `kimi --agent product-manager`./
 /^name: product-manager$/,/^---$/ {
     /^model: inherit$/a\
 subagents: architect, developer, porter, reviewer, tester, ux-designer
