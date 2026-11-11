@@ -1,7 +1,7 @@
 {
   "name": "apertrust",
-  "version": "0.1.0",
-  "description": "Skills, agents and commands for working on Apertrust, a free, non-destructive, cross-platform raw photo editor, with Claude Code.",
+  "version": "0.2.0",
+  "description": "Skills, agents and commands for working on Apertrust with AI coding agents.",
   "author": {
     "name": "Apertrust developers"
   },

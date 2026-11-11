@@ -17,11 +17,13 @@
 
 # Copies the kit's skills, agents and commands into a checkout of Apertrust.
 #
-#   install.sh CHECKOUT [--harness claude|opencode|copilot|kimi|all] [--uninstall]
+#   install.sh CHECKOUT [--harness claude|codex|opencode|copilot|kimi|all] [--uninstall]
 #
 # claude    skills, agents and commands into CHECKOUT/.claude/
 # opencode  skills into CHECKOUT/.agents/skills/ (agents and commands: not yet)
 # copilot   the same folder as opencode (agents and commands: not yet)
+# codex     skills in .agents/skills/, commands as skills, agents as TOML in
+#           .codex/agents/
 # kimi      everything into CHECKOUT/.kimi-code/, for Kimi Code: skills into
 #           skills/, each command as a flat skill, skills/<name>.md, and the
 #           agents into agents/, with Kimi's tool, path and delegation names
@@ -36,7 +38,7 @@
 set -eu
 
 usage() {
-    echo "usage: $0 CHECKOUT [--harness claude|opencode|copilot|kimi|all] [--uninstall]" >&2
+    echo "usage: $0 CHECKOUT [--harness claude|codex|opencode|copilot|kimi|all] [--uninstall]" >&2
     exit 2
 }
 
@@ -85,14 +87,17 @@ checkout=$(cd "$checkout" && pwd -P)
 claude=0
 agents_folder=0
 kimi=0
+codex=0
 case $harness in
 claude) claude=1 ;;
 opencode | copilot) agents_folder=1 ;;
 kimi) kimi=1 ;;
+codex) agents_folder=1; codex=1 ;;
 all)
     claude=1
     agents_folder=1
     kimi=1
+    codex=1
     ;;
 *)
     echo "unknown harness: $harness" >&2
@@ -169,8 +174,104 @@ install_files() {
     done <"$tmp/files"
 }
 
+# Codex skills are folders with a SKILL.md. Keep the command source in commands/
+# and adapt its Claude-oriented invocation into a generally invokable skill.
+install_codex_commands() {
+    find "$kit/commands" -type f -name '*.md' ! -name .DS_Store | sort >"$tmp/files"
+    while IFS= read -r src; do
+        name=$(basename "$src" .md)
+        rel=.agents/skills/$name/SKILL.md
+        dest=$checkout/$rel
+        description=$(sed -n '2,/^---$/ { /^description:/s/^description: //p; }' "$src")
+        {
+            echo '---'
+            echo "name: $name"
+            echo "description: $description"
+            echo '---'
+            awk 'BEGIN { frontmatter = 1; separators = 0 } /^---$/ { separators++; if (separators == 2) frontmatter = 0; next } !frontmatter { print }' "$src" |
+                sed -e 's/\$ARGUMENTS/the arguments from the user request/g' \
+                    -e 's#\.claude/skills/#.agents/skills/#g' \
+                    -e 's#\.claude/commands/#.agents/skills/#g' \
+                    -e 's#\.agents/skills/draft-commit\.md#.agents/skills/draft-commit/SKILL.md#g' \
+                    -e 's#\.agents/skills/draft-pr\.md#.agents/skills/draft-pr/SKILL.md#g' \
+                    -e 's#\.agents/skills/golden\.md#.agents/skills/golden/SKILL.md#g' \
+                    -e 's#\.agents/skills/port\.md#.agents/skills/port/SKILL.md#g' \
+                    -e 's#`/draft-commit`#`$draft-commit`#g' \
+                    -e 's#`/draft-pr`#`$draft-pr`#g' \
+                    -e 's#`/golden`#`$golden`#g' \
+                    -e 's#`/port`#`$port`#g' \
+                    -e 's/with `isolation: "worktree"`/in a separate worktree created with `git worktree add`; pass its absolute path in the brief. If Codex cannot run the subagent there, stop before it edits and ask the user to start `codex --cd PATH --agent porter`/' \
+                    -e 's/Resume the porter with their answers (SendMessage)/Resume the porter subagent with the user answers/'
+        } >"$tmp/filtered"
+        if [ -f "$dest" ] && [ ! -L "$dest" ] && listed "$old" "$rel"; then
+            if cmp -s "$tmp/filtered" "$dest"; then
+                echo "present  $rel"
+            else
+                cp -p "$tmp/filtered" "$dest"
+                echo "updated  $rel"
+            fi
+        elif [ -e "$dest" ] || [ -L "$dest" ]; then
+            echo "skipped  $rel (exists, and the kit did not install it)"
+            continue
+        else
+            mkdir -p "$(dirname "$dest")"
+            cp -p "$tmp/filtered" "$dest"
+            echo "copied   $rel"
+        fi
+        echo "$rel" >>"$new"
+    done <"$tmp/files"
+}
+
+# Codex custom agents use one TOML file per agent. The Markdown source remains
+# shared with Claude Code and Kimi Code; tool declarations are not portable.
+install_codex_agents() {
+    find "$kit/agents" -type f -name '*.md' ! -name .DS_Store | sort >"$tmp/files"
+    while IFS= read -r src; do
+        name=$(basename "$src" .md)
+        rel=.codex/agents/$name.toml
+        dest=$checkout/$rel
+        description=$(sed -n '2,/^---$/ { /^description:/s/^description: //p; }' "$src")
+        description=$(printf '%s\n' "$description" | sed -e 's/claude --agent/codex --agent/g' -e 's/; as a subagent it can only plan and research//')
+        {
+            echo "name = '$name'"
+            echo "description = '''$description'''"
+            echo "developer_instructions = '''"
+            awk 'BEGIN { frontmatter = 1; separators = 0 } /^---$/ { separators++; if (separators == 2) frontmatter = 0; next } !frontmatter { print }' "$src" |
+                sed -e 's#\.claude/skills/#.agents/skills/#g' \
+                    -e 's#\.claude/commands/#.agents/skills/#g' \
+                    -e 's/claude --agent/codex --agent/g' \
+                    -e 's#\.agents/skills/draft-commit\.md#.agents/skills/draft-commit/SKILL.md#g' \
+                    -e 's#\.agents/skills/draft-pr\.md#.agents/skills/draft-pr/SKILL.md#g' \
+                    -e 's#\.agents/skills/golden\.md#.agents/skills/golden/SKILL.md#g' \
+                    -e 's#\.agents/skills/port\.md#.agents/skills/port/SKILL.md#g' \
+                    -e 's#`/draft-commit`#`$draft-commit`#g' \
+                    -e 's#`/draft-pr`#`$draft-pr`#g' \
+                    -e 's#`/golden`#`$golden`#g' \
+                    -e 's#`/port`#`$port`#g' \
+                    -e 's/Run it as the main session, `codex --agent product-manager`, since an agent started by another cannot start agents of its own; as a subagent it can only plan and research\./Run it as the main session, `codex --agent product-manager`, so it can orchestrate the other project agents./'
+            echo "'''"
+        } >"$tmp/filtered"
+        if [ -f "$dest" ] && [ ! -L "$dest" ] && listed "$old" "$rel"; then
+            if cmp -s "$tmp/filtered" "$dest"; then
+                echo "present  $rel"
+            else
+                cp -p "$tmp/filtered" "$dest"
+                echo "updated  $rel"
+            fi
+        elif [ -e "$dest" ] || [ -L "$dest" ]; then
+            echo "skipped  $rel (exists, and the kit did not install it)"
+            continue
+        else
+            mkdir -p "$(dirname "$dest")"
+            cp -p "$tmp/filtered" "$dest"
+            echo "copied   $rel"
+        fi
+        echo "$rel" >>"$new"
+    done <"$tmp/files"
+}
+
 # sync ROOT: bring CHECKOUT/ROOT in line with the kit, or empty it of the kit's
-# files with --uninstall; ROOT is .claude, .agents or .kimi-code. The rest of the script
+# files with --uninstall; ROOT is a harness-specific install folder. The rest of the script
 # fills in what each root receives before it calls this.
 sync() {
     root=$1
@@ -192,7 +293,10 @@ sync() {
             install_files commands "$root/commands" '*.md'
             ;;
         .agents)
-            install_files skills "$root/skills" '*'
+            install_files skills "$root/skills" '*' 's#\.claude/skills/#.agents/skills/#g'
+            if [ "$codex" -eq 1 ]; then
+                install_codex_commands
+            fi
             ;;
         .kimi-code)
             # Kimi Code reads Claude Code's agent files, with its own tool, folder
@@ -211,6 +315,9 @@ s/Run it as the main session, `claude --agent product-manager`, since an agent s
     /^model: inherit$/a\
 subagents: architect, developer, porter, reviewer, tester, ux-designer
 }'
+            ;;
+        .codex)
+            install_codex_agents
             ;;
         esac
     fi
@@ -252,9 +359,12 @@ if [ "$claude" -eq 1 ]; then
 fi
 if [ "$agents_folder" -eq 1 ]; then
     sync .agents
-    [ "$uninstall" -eq 1 ] ||
+    [ "$uninstall" -eq 1 ] || [ "$codex" -eq 1 ] ||
         echo "note: agents and commands for opencode and Copilot are not supported yet"
 fi
 if [ "$kimi" -eq 1 ]; then
     sync .kimi-code
+fi
+if [ "$codex" -eq 1 ]; then
+    sync .codex
 fi
