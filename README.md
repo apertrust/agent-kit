@@ -22,11 +22,14 @@ The files are written for a checkout of the main repository. The paths in them (
 | Harness | Skills | Agents | Commands |
 | --- | --- | --- | --- |
 | Claude Code | yes | yes | yes |
+| Codex | yes | yes | as skills |
 | Kimi Code | yes | yes | as skills |
 | opencode | yes | not yet | not yet |
 | GitHub Copilot | yes | not yet | not yet |
 
 opencode and Copilot both read skills from `.agents/skills/`. Their agents and commands use other formats, and the kit does not convert them yet.
+
+Codex reads the skills from `.agents/skills/`, and its custom agents from `.codex/agents/` as TOML files. The installer converts each command into an invokable skill folder (`$draft-commit`, `$draft-pr`, `$golden`, `$port`) and converts the Markdown agent definitions into Codex custom agents. Run one as the main agent with `codex --agent reviewer`. The generated agents inherit the active session's tools and permissions.
 
 Kimi Code reads the skills and Claude Code's agent files from `.kimi-code/`. It has no commands folder, so each command is installed as a flat skill, `.kimi-code/skills/<name>.md`, run as `/draft-commit` or `/skill:draft-commit`. The installer renames the agents' `WebFetch` tool to `FetchURL`, points their `.claude/` paths at `.kimi-code/`, adapts `/port`'s worktree and resume steps to Kimi's Agent tool, and gives the product manager a `subagents` list for the other kit agents; their `model` is ignored. Run an agent as the main one with `kimi --agent reviewer`.
 
@@ -66,7 +69,7 @@ Clone the kit beside your checkout of Apertrust, then run its script on the chec
 ```sh
 git clone https://github.com/apertrust/agent-kit.git
 cd agent-kit
-./install.sh ../apertrust --harness claude    # or kimi, opencode, copilot, or all
+./install.sh ../apertrust --harness codex     # or claude, kimi, opencode, copilot, or all
 ```
 
 The script copies files; it works in a POSIX shell, Git Bash on Windows included. What each harness reads:
@@ -74,13 +77,14 @@ The script copies files; it works in a POSIX shell, Git Bash on Windows included
 | `--harness` | Copies | Into |
 | --- | --- | --- |
 | `claude` | skills, agents, commands | `.claude/skills/`, `.claude/agents/`, `.claude/commands/` |
+| `codex` | skills, agents, commands as skills | `.agents/skills/`, `.codex/agents/` |
 | `opencode` or `copilot` | skills | `.agents/skills/` (both read it) |
 | `kimi` | skills, agents, commands as skills | `.kimi-code/skills/`, `.kimi-code/agents/` |
 | `all` (the default) | all of the above | |
 
 The main repository's `.gitignore` ignores these folders, so the copies never show in `git status` and are never committed.
 
-Each folder gets a manifest, `.claude/.agent-kit-installed`, `.agents/.agent-kit-installed` and `.kimi-code/.agent-kit-installed`, listing the files the script installed, one path per line, after two comment lines with the kit's version and commit. After a `git pull` in the kit, run the same command again: it replaces the files that changed, adds new ones and removes those the kit no longer has, by the manifest. Do not edit the copies; the next run overwrites them. Add your own skills or agents under other names.
+Each target gets a manifest, `.claude/.agent-kit-installed`, `.agents/.agent-kit-installed`, `.kimi-code/.agent-kit-installed` or `.codex/.agent-kit-installed`, listing the files the script installed, one path per line, after two comment lines with the kit's version and commit. After a `git pull` in the kit, run the same command again: it replaces the files that changed, adds new ones and removes those the kit no longer has, by the manifest. Do not edit the copies; the next run overwrites them. Add your own skills or agents under other names.
 
 The script never touches a file it did not install. If a file with the same name is already there, it skips it and says so. To remove everything it installed, and nothing else:
 
@@ -90,7 +94,7 @@ The script never touches a file it did not install. If a file with the same name
 
 ### By hand
 
-Copy `skills/<name>/` from the kit into `.claude/skills/` (Claude Code), `.kimi-code/skills/` (Kimi Code) or `.agents/skills/` (opencode and Copilot) in your checkout. For Claude Code, copy `agents/<name>.md` into `.claude/agents/` and `commands/<name>.md` into `.claude/commands/`. For Kimi Code, copy the agents into `.kimi-code/agents/` and the commands into `.kimi-code/skills/`, then apply the tool, path, worktree, resume and delegation adaptations described above. Delete the copies to remove them.
+Copy `skills/<name>/` from the kit into `.claude/skills/` (Claude Code), `.kimi-code/skills/` (Kimi Code) or `.agents/skills/` (Codex, opencode and Copilot) in your checkout. For Claude Code, copy `agents/<name>.md` into `.claude/agents/` and `commands/<name>.md` into `.claude/commands/`. For Codex, convert agents to TOML custom agents in `.codex/agents/` and make each command an invokable skill in `.agents/skills/<name>/`. For Kimi Code, copy the agents into `.kimi-code/agents/` and the commands into `.kimi-code/skills/`, then apply the tool, path, worktree, resume and delegation adaptations described above. Delete the copies to remove them.
 
 ### DeepWiki, for orientation
 
@@ -109,6 +113,13 @@ The kit adds [DeepWiki](https://deepwiki.com)'s public MCP server, which answers
   { "mcpServers": { "deepwiki": { "url": "https://mcp.deepwiki.com/mcp" } } }
   ```
 
+- **Codex:** add it to `.codex/config.toml` in the Apertrust checkout:
+
+  ```toml
+  [mcp_servers.deepwiki]
+  url = "https://mcp.deepwiki.com/mcp"
+  ```
+
 - **opencode:** add it to your own `opencode.json`:
 
   ```json
@@ -117,7 +128,7 @@ The kit adds [DeepWiki](https://deepwiki.com)'s public MCP server, which answers
 
 ### Not yet
 
-The agents and commands for opencode and Copilot are not there yet: those harnesses get the skills only. The kit does not convert them yet.
+The agents and commands for opencode and Copilot are not there yet: those harnesses get the skills only.
 
 ## Checking the kit against the repository
 
