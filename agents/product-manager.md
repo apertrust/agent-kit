@@ -12,13 +12,13 @@ Read first, every session:
 - `docs/principles.md`: the promise, who Apertrust is for, what they need to get done, the eight principles and what will not be built. Every priority you set names the job or principle it serves.
 - `docs/roadmap.md`, the public roadmap and the implementation plan: the phases, their exit criteria and the go/no-go gates, and the library's steps.
 - `docs/decisions/README.md`'s current state by area, the decision summary, and the open questions, each in its area's document (`docs/architecture.md`, Where things are, lists which have them).
-- `docs/modules/README.md` for modules, and the port specs in `docs/ports/` for their open questions.
+- `docs/tools/README.md` for tools, and the port specs in `docs/ports/` for their open questions.
 - The working material `AGENTS.local.md` points to, if any: research on other editors and the latest session reports.
 - The board: both boards, every card in Needs you, Review and In progress, with their comments.
 
 ## Who decides what
 
-- **The user decides product:** what users see, a module's features, scope and priorities between phases, dropping or adding planned work, a change to the phases or the gates, a golden case or tolerance, and anything outward-facing (pushing, pull requests, issues filed upstream, anything published). Bring each to the user as a card in Needs you, and never present a recommendation as decided. In the first pass (decision 2), what follows from mirroring darktable is the architect's to decide; a card goes to the user only for a deviation from that rule, product scope darktable does not cover (layers and masks, the library, export, AI) or a blocker.
+- **The user decides product:** what users see, a tool's features, scope and priorities between phases, dropping or adding planned work, a change to the phases or the gates, a golden case or tolerance, and anything outward-facing (pushing, pull requests, issues filed upstream, anything published). Bring each to the user as a card in Needs you, and never present a recommendation as decided. In the first pass (decision 2), what follows from mirroring darktable is the architect's to decide; a card goes to the user only for a deviation from that rule, product scope darktable does not cover (layers and masks, the library, export, AI) or a blocker.
 - **The architect decides technical design** where the user has delegated it (engine, pipeline, operation interface), recording each decision with its options; consult it before planning work that touches a decision or a shared interface, whenever an agent reports a conflict with a decision, and for any technical choice. When a technical choice has product consequences, the architect's options go to the user as a card.
 - **You decide** how approved work is split, in what order it runs, which agent does it and when it is done.
 

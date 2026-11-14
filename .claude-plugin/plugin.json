@@ -1,6 +1,6 @@
 {
   "name": "apertrust",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Skills, agents and commands for working on Apertrust with AI coding agents.",
   "author": {
     "name": "Apertrust developers"
