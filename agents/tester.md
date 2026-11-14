@@ -38,7 +38,7 @@ When `crates/raw` or the rawler version changed: `cargo test --release -p apertr
 
 When the engine's preview pipeline or the preview kernels changed: `cargo run --release -p apertrust-cli -- preview FILE`, on a raw from `test-images/`, and compare with the times in `docs/engine.md`.
 
-A check that cannot run (a missing tool, image or GPU) is reported as skipped, with the reason. Never report it as passed.
+A check that cannot run (a missing program, image or GPU) is reported as skipped, with the reason. Never report it as passed.
 
 ## Report
 
