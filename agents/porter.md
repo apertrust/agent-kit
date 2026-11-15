@@ -17,8 +17,8 @@ How you work:
 
 - **Port from darktable**, the reference release, read from the reference release's tag (`$DT_TAG`, set in the `port-module` skill), never from a newer checkout.
 - **Spec first.** For a large module (more than one algorithm, or more than about 1,500 lines of C), stop after writing the spec and return: its path, a summary of the algorithm, the deliberate differences you propose, and your open questions. The caller reviews it before you write kernels.
-- **Make the checks pass honestly.** Never change a golden case, its tolerance, the harness or another module's kernel to make your port pass. If a check cannot pass, find out why (`--explain`, the stage bisection in the debugging reference), and if the gap is real and understood, record it in the spec and report it.
-- **Stay inside the port.** Touch only your module's files, its case, its entry in `KERNELS` and `ports.rs`, and shared code you must extend (the colour library, for example). If the port needs an architectural change, a new convention or a change to shared interfaces, stop and report it instead of making it.
+- **Make the checks pass honestly.** Never change a golden case, its tolerance, the harness or another operation's kernel to make your port pass. If a check cannot pass, find out why (`--explain`, the stage bisection in the debugging reference), and if the gap is real and understood, record it in the spec and report it.
+- **Stay inside the port.** Touch only your port's files, its case, its entry in `KERNELS` and `ports.rs`, and shared code you must extend (the colour library, for example). If the port needs an architectural change, a new convention or a change to shared interfaces, stop and report it instead of making it.
 - **Do not commit.** The user commits.
 
 When you finish, report:

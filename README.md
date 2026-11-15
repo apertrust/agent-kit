@@ -4,7 +4,7 @@ Skills, agents and commands for working on [Apertrust](https://github.com/apertr
 
 The kit is optional help. Nothing in the main repository turns it on, and you choose whether to install it; the rules every contribution must meet are in the main repository's `AGENTS.md`, and CI and review check them whatever you use.
 
-The kit holds what an agent needs to work the way the project does. The skills explain how to port a darktable module, write a kernel, add an engine plugin, bind a module and shape the interface. The agents and commands split the work into small tasks: a developer, a porter, a reviewer, a tester, and a few more.
+The kit holds what an agent needs to work the way the project does. The skills explain how to port a darktable module, write a kernel, add an engine plugin, bind a tool and shape the interface. The agents and commands split the work into small tasks: a developer, a porter, a reviewer, a tester, and a few more.
 
 ## What is in it
 

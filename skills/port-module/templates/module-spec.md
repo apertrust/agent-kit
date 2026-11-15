@@ -8,7 +8,7 @@ Golden result (case `<case>`, darktable test <NNNN>, <image>, <width>×<height>,
 
 ## Purpose
 
-One paragraph: what the module does for the photographer, in editing terms, and how it achieves it, in one sentence of algorithm terms. Which Apertrust module owns it (`docs/modules/README.md`).
+One paragraph: what the module does for the photographer, in editing terms, and how it achieves it, in one sentence of algorithm terms. Which Apertrust tool owns it (`docs/tools/README.md`).
 
 ## Pipeline
 
@@ -27,7 +27,7 @@ darktable params version <n>: <the fields in order, with types>.
 | --- | --- | --- | --- | --- | --- | --- |
 | | | | | | | |
 
-Owner: the module and tab whose controls set the parameter (`docs/modules/README.md`, Owners by operation; one owning module per parameter), or "fixed" with the reason it has no editing meaning. A parameter a layer-capable module owns must not be a tone-mapper parameter (architecture decision 33).
+Owner: the tool and tab whose controls set the parameter (`docs/tools/README.md`, Owners by operation; one owning tool per parameter), or "fixed" with the reason it has no editing meaning. A parameter a layer-capable tool owns must not be a tone-mapper parameter (architecture decision 33).
 
 ## Parameter versions
 
@@ -72,7 +72,7 @@ A departure from what darktable renders reproducibly is agreed first, and names 
 
 ## Tool binding notes
 
-How the owning modules' controls reach the parameters: transfer functions, units the control shows differently from the engine (an inverted or rescaled value), and why each fixed parameter has no editing meaning. **What is an identity:** the setting where the operation changes nothing, or "none". **darktable's defaults for a new instance:** the values its module starts from; a module darktable leaves off on a new photo is switched, off until a control changes, then on with them (decision 32). The Owner column says who owns a parameter; this says how its control drives it.
+How the owning tools' controls reach the parameters: transfer functions, units the control shows differently from the engine (an inverted or rescaled value), and why each fixed parameter has no editing meaning. **What is an identity:** the setting where the operation changes nothing, or "none". **darktable's defaults for a new instance:** the values darktable's module starts from; a tool darktable leaves off on a new photo is switched, off until a control changes, then on with them (decision 32). The Owner column says who owns a parameter; this says how its control drives it.
 
 ## Gradients
 
@@ -82,7 +82,7 @@ The parameters the kernel differentiates against, in its derivative entry points
 
 - **Golden cases:** <darktable integration tests, edited sidecars for modes they lack>
 - **Tolerance:** `Tolerance::DARKTABLE` (mean ΔE2000 ≤ 0.767, max ≤ 2.3), or a stricter or looser one with the reason
-- **Invariants:** a module that is off is a no-op (decision 32), and one every photo runs untouched at its defaults; finite output for very bright, zero and negative input; <monotonicity or other module-specific properties>; parameter migrations render identically
+- **Invariants:** a tool that is off is a no-op (decision 32), and one every photo runs untouched at its defaults; finite output for very bright, zero and negative input; <monotonicity or other operation-specific properties>; parameter migrations render identically
 
 ## Open questions
 

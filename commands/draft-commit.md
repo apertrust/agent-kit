@@ -21,7 +21,7 @@ Draft a commit message for this change. $ARGUMENTS
    Port grain from darktable
 
    The kernel follows darktable's noise and its mid-tones bias, and the
-   module plans the operation only while Strength is off zero, so an
+   tool plans the operation only while Strength is off zero, so an
    untouched photo renders as before.
 
    The five golden cases match within a mean ΔE2000 of 0.0008 on the
